@@ -62,7 +62,7 @@ public class Compare2 {
     }
     
     
-    public void drugOverlap(String compare2Gsp, String drugDrugNames,
+    public void drugNonoverlap(String compare2Gsp, String drugDrugNames,
             String output){
         HashMap<String, String> drugNameDrugMap = new DataReader().readMap2(drugDrugNames);
         FileReader fr = null;
@@ -190,14 +190,14 @@ public class Compare2 {
     public void runDrugNonoverlap(){
         String compare2Gsp = "../../compare2/compare2_gsp.txt";;
         String drugDrugNameAssoc = "../../assoc/drug_drug_names_assoc.txt";
-        String output = "../../compare2/drug_uncontained.txt";
-        drugOverlap(compare2Gsp, drugDrugNameAssoc, output);
+        String output = "../../compare2/drug_nonoverlap.txt";
+        drugNonoverlap(compare2Gsp, drugDrugNameAssoc, output);
     }
     
     
     public static void main(String args[]){
-        new Compare2().runDiseaseNonoverlap();
+        //new Compare2().runDiseaseNonoverlap();
         //new Compare2().runCheckGspOverlap();
-        //new Compare2().runDrugOverlap();
+        new Compare2().runDrugNonoverlap();
     }
 }

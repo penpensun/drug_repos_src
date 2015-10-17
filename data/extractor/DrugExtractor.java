@@ -389,12 +389,15 @@ public class DrugExtractor {
      */
     public void extractSmilesByName(DrugReposConfig conf, String nameFile, String output){
         DataReader reader = new DataReader();
-        ArrayList<String> nameList = reader.readIds(nameFile);
+        ArrayList<String> nameList = reader.readIds2(nameFile);
+        for(int i=0;i<nameList.size();i++)
+            nameList.set(i, nameList.get(i).toLowerCase());
+        
         List<Element> drugElementList = extractDrugList(conf.drug_xml);
         HashMap<String, String> smilesMap = new HashMap<>();
         for(Element drug: drugElementList){
             String name = extractDrugName(drug);
-            
+            name = name.toLowerCase();
             if(!nameList.contains(name))
                 continue;
             String id = extractPrimaryId(drug);
@@ -763,6 +766,14 @@ public class DrugExtractor {
         extractSmilesById(conf, conf.drug_id, conf.drug_smiles);
     }
     
+    public void runExtractSmilesByName(){
+        DrugReposConfig conf = new DrugReposConfig();
+        new data.init.InitDrugReposConfig().initDrugReposConfig2(conf);
+        conf.compare2_append_names = "../../compare2/drug_nonoverlap.txt";
+        conf.compare2_append_smiles = "../../compare2/drug_nonoverlap_smiles.txt";
+        extractSmilesByName(conf,conf.compare2_append_names,conf.compare2_append_smiles);
+    }
+    
     public void testComputeMatrix(){
         DrugReposConfig conf = new DrugReposConfig();
          DataReader reader = new DataReader();
@@ -786,18 +797,7 @@ public class DrugExtractor {
         }
         
     }
-    
-    public void modMatrix(){
-        String m = "../../matrix/new_drug_matrix.txt";
-        String drug_id = "../../id/drug_id.txt";
-        ArrayList<String> drugs = new DataReader().readIds2(drug_id);
-        float[][] matrix = new DataReader().readMatrix(m, drugs.size(), drugs.size());
-        for(int i=0;i<matrix.length;i++)
-            for(int j =0;j<matrix.length;j++)
-                if(i==j)
-                    matrix[i][j] = Float.NaN;
-        new DataWriter().writeMatrix(matrix, "../../matrix/new_drug_matrix.txt");
-    }
+
     
     
     
@@ -813,7 +813,8 @@ public class DrugExtractor {
        //new DrugExtractor().runExtractDrugGeneMatrix(1,0);
        //new DrugExtractor().runExtractSmilesById();
        //new DrugExtractor().testComputeMatrix();
-       new DrugExtractor().modMatrix();
+       //new DrugExtractor().modMatrix();
+       new DrugExtractor().runExtractSmilesByName();
     }
     
     
