@@ -41,7 +41,7 @@ public class DataReader {
                 if (line.trim().isEmpty()) {
                     continue;
                 }
-                String[] splits = line.split("\\s+");
+                String[] splits = line.split("\n");
                 for (String nodeName : splits) {
                     drugIdList.add(String.copyValueOf(nodeName.toCharArray()));
                 }

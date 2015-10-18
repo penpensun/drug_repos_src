@@ -107,7 +107,7 @@ public class DataProcessor {
     
     
     public void summarizeRes(DrugReposConfig conf, HashMap<String, HashSet<String>> resMap,
-            float thresh, boolean append){
+            boolean append){
         /* Get the drug list. */
         DataReader reader = new DataReader();
         ArrayList<String> diseaseList = reader.readIds2(conf.disease_id);

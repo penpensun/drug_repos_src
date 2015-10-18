@@ -168,7 +168,7 @@ public class SematicValidation {
         Pipeline pl = new Pipeline();
         DrugReposConfig config = new DrugReposConfig();
         
-        new InitDrugReposConfig().initDrugReposConfig2(config);
+        new InitDrugReposConfig().initDrugReposConfig(config);
         //config.repos_output = "../../parsed_res_0.1_0.45.txt";
         config.repos_output = "../../assoc/drug_disease_assoc.txt";
         /*

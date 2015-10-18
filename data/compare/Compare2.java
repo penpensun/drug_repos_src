@@ -7,7 +7,7 @@ package data.compare;
 import java.io.*;
 import data.io.*;
 import java.util.*;
-import data.processor.DataCounter;
+
 /**
  *
  * @author penpen926
@@ -19,7 +19,7 @@ public class Compare2 {
      * @param cui 
      * @param output 
      */
-    public void checkDiseaseNonoverlap(String compare2Disease, 
+    public void extractDiseaseNonoverlap(String compare2Disease, 
             String cui,
             String output){
         FileReader fr = null;
@@ -49,9 +49,9 @@ public class Compare2 {
             while((line = br.readLine())!= null){
                 String[] splits = line.split("\t");
                 String cuiId = splits[2];
-                if(!cuiList.contains(cuiId) && !containedDiseaseName.contains(splits[1])){
+                if(!cuiList.contains(cuiId) && 
+                        !containedDiseaseName.contains(splits[1]))
                     uncontainedDiseaseName.add(splits[1]);
-                }
             }
             new DataWriter().writeHashSet(uncontainedDiseaseName, output, "\n");
             fr.close();
@@ -62,7 +62,7 @@ public class Compare2 {
     }
     
     
-    public void drugNonoverlap(String compare2Gsp, String drugDrugNames,
+    public void extractDrugNonoverlap(String compare2Gsp, String drugDrugNames,
             String output){
         HashMap<String, String> drugNameDrugMap = new DataReader().readMap2(drugDrugNames);
         FileReader fr = null;
@@ -78,13 +78,15 @@ public class Compare2 {
                 if(!drugNameDrugMap.containsValue(drug))
                     uncontained.add(drug);
             }
-            
             new DataWriter().writeHashSet(uncontained, output, "\n");
         }catch(IOException e){
             e.printStackTrace();
         }
     }
     
+    public void extractDiseaseMapping(String compare2Disease, String diseaseCuiMap,String output){
+        
+    }
     
     private HashMap<String, HashSet<String>> readCompare2DiseaseCuiMap(String compare2Disease){
         FileReader fr = null;
@@ -129,69 +131,20 @@ public class Compare2 {
     }
     
     
-    
-    
-    public void checkGoldStandardOverlap(String drugDrugNameAssoc, String drugDiseaseAssoc, 
-            String compareGsp, String compare2Disease,String diseaseCuiAssoc, String output){
-        DataReader reader = new DataReader();
-        HashMap<String, String> drugDrugNameMap = reader.readMapInReverseOrder2(drugDrugNameAssoc);
-        HashMap<String, HashSet<String>> cuiDiseaseMap = reader.readMapInReverseOrder4(diseaseCuiAssoc);
-        HashMap<String, HashSet<String>> compare2DiseaseCuiMap = readCompare2DiseaseCuiMap(compare2Disease);
-        FileReader fr = null;
-        BufferedReader br = null;
-        
-        try{
-            HashMap<String, HashSet<String>> ans = new HashMap<>();
-            fr = new FileReader(compareGsp);
-            br = new BufferedReader(fr);
-            
-            String line=  null;
-            while((line =br.readLine())!= null){
-                String splits[] = line.split("\t");
-                String drugName = splits[0];
-                String diseaseName = splits[1];
-                // map the disease in comapre 2 to our data set
-                HashSet<String> mappedDiseases = mapDiseaseName(diseaseName, compare2DiseaseCuiMap,
-                        cuiDiseaseMap);
-                String drugId = drugDrugNameMap.get(drugName);
-                if(mappedDiseases == null || mappedDiseases.isEmpty() || drugId == null){
-                    System.out.println(drugName+"\t"+diseaseName);
-                    continue;
-                }
-                if(!ans.containsKey(drugId))
-                    ans.put(drugId, new HashSet<>());
-                ans.get(drugId).addAll(mappedDiseases);
-            }
-            new DataWriter().writeHashMap2(ans, output);
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-    }
-    
-    
     public void runDiseaseNonoverlap(){
         String cuiId = "../../id/cui.txt";
         String compareDisease = "../../compare2/disease.txt";
         String nonOverlap = "../../compare2/disease_nonoverlap.txt";
-        checkDiseaseNonoverlap(compareDisease, cuiId, nonOverlap);
+        extractDiseaseNonoverlap(compareDisease, cuiId, nonOverlap);
     }
     
-    public void runCheckGspOverlap(){
-        String drugDrugNameAssoc = "../../assoc/drug_drug_names_assoc.txt";
-        String drugDiseaseAssoc = "../../assoc/drug_disease_assoc.txt";
-        String compare2Gsp = "../../compare2/compare2_gsp.txt";
-        String compare2Disease = "../../compare2/disease.txt";
-        String output = "../../compare2/gsp_overlap.txt";
-        String diseaseCuiAssoc = "../../assoc/disease_cui_assoc.txt";
-        checkGoldStandardOverlap(drugDrugNameAssoc, drugDiseaseAssoc, compare2Gsp, compare2Disease, diseaseCuiAssoc, output);
-        System.out.println(new DataCounter().mapCounter(output));
-    }
+    
     
     public void runDrugNonoverlap(){
         String compare2Gsp = "../../compare2/compare2_gsp.txt";;
         String drugDrugNameAssoc = "../../assoc/drug_drug_names_assoc.txt";
         String output = "../../compare2/drug_nonoverlap.txt";
-        drugNonoverlap(compare2Gsp, drugDrugNameAssoc, output);
+        extractDrugNonoverlap(compare2Gsp, drugDrugNameAssoc, output);
     }
     
     

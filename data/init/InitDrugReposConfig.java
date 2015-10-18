@@ -13,7 +13,7 @@ import nforce.io.Config;
  */
 public class InitDrugReposConfig {
 
-    public void initDrugReposConfig2(DrugReposConfig conf) {
+    public void initDrugReposConfig(DrugReposConfig conf) {
         //Drug bank xml
         conf.drug_xml = "../../drugbank/drugbank.xml";
         // Id Files
@@ -130,6 +130,8 @@ public class InitDrugReposConfig {
         conf.disease_to_remove_file = "../../disease/disease_to_remove_id.txt";
     }
 
+    
+    /*
     public void initDrugReposConfig(DrugReposConfig conf) {
         conf.drug_id = "../../id/drug_id.txt";
         conf.gene_id = "../../id/gene_id.txt";
@@ -234,5 +236,5 @@ public class InitDrugReposConfig {
         conf.remove_dissimilar_disease = true;
         conf.disease_to_remove_file = "../../disease/disease_to_remove_id.txt";
     }
-    
+    */
 }

@@ -762,13 +762,13 @@ public class DrugExtractor {
     
     public void runExtractSmilesById(){
         DrugReposConfig conf = new DrugReposConfig();
-        new data.init.InitDrugReposConfig().initDrugReposConfig2(conf);
+        new data.init.InitDrugReposConfig().initDrugReposConfig(conf);
         extractSmilesById(conf, conf.drug_id, conf.drug_smiles);
     }
     
     public void runExtractSmilesByName(){
         DrugReposConfig conf = new DrugReposConfig();
-        new data.init.InitDrugReposConfig().initDrugReposConfig2(conf);
+        new data.init.InitDrugReposConfig().initDrugReposConfig(conf);
         conf.compare2_append_names = "../../compare2/drug_nonoverlap.txt";
         conf.compare2_append_smiles = "../../compare2/drug_nonoverlap_smiles.txt";
         extractSmilesByName(conf,conf.compare2_append_names,conf.compare2_append_smiles);
@@ -777,7 +777,7 @@ public class DrugExtractor {
     public void testComputeMatrix(){
         DrugReposConfig conf = new DrugReposConfig();
          DataReader reader = new DataReader();
-        new data.init.InitDrugReposConfig().initDrugReposConfig2(conf);
+        new data.init.InitDrugReposConfig().initDrugReposConfig(conf);
         ArrayList<String> drugList = reader.readIds2(conf.drug_id);
         conf.drug_matrix = "../../matrix/new_drug_matrix.txt";
         //extractDrugMatrix(conf);

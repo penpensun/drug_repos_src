@@ -370,7 +370,7 @@ public class DataGenerator {
     
     public void runGsn(){
         DrugReposConfig conf = new DrugReposConfig();
-        new InitDrugReposConfig().initDrugReposConfig2(conf);
+        new InitDrugReposConfig().initDrugReposConfig(conf);
         conf.gsn = "../../gsn/negative_comp.txt";
         generateNegativeSpecial(conf,0.0f,60000);
     }

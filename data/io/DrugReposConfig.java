@@ -101,4 +101,17 @@ public class DrugReposConfig {
     public String compare2_append_names;
     public String compare2_append_smiles;
     public String compare2_new_smiles;
+    public String compare2_drug_id;
+    public String compare2_disease_id;
+    public String compare2_drug_disease_assoc;
+    public String compare2_drug_disease_matrix;
+    public String compare2_drug_matrix;
+    public String compare2_disease_matrix;
+    public String compare2_drug_disease_cv_matrix;
+    public String compare2_drug_disease_precluster_cv_matrix;
+    public float compare2_cv_prop;
+    public String compare2_gsp;
+    public String compare2_gsn;
+    public String compare2_result_output;
+    
 }
