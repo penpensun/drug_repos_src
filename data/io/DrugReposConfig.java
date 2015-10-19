@@ -18,6 +18,7 @@ public class DrugReposConfig {
     
     public String drug_xml;
     public String drug_id;
+    public String cas_id;
     public String drug_smiles;
     public String drug_matrix;
     public String gene_id;

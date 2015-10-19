@@ -9,6 +9,7 @@ import data.io.*;
 import data.processor.IndigoSim;
 import java.util.*;
 import data.init.InitDrugReposConfig;
+import data.extractor.DrugExtractor;
 
 /**
  *
@@ -327,6 +328,11 @@ public class Compare2 {
      * This method extracts the drug-gene matrix for compare2.
      */
     private void computeDrugGeneMatrix(){
+        DrugExtractor drugEx = new DrugExtractor();
+        DrugReposConfig conf = new DrugReposConfig();
+        new data.init.InitDrugReposConfig().initCompare2(conf);
+        drugEx.extractDrugCasNumberRelation(conf.drug_id, conf.drug_xml, conf.cas_id);
+        
         
     }
     
@@ -370,7 +376,8 @@ public class Compare2 {
         //new Compare2().computeDrugMatrix();
        // new Compare2().computeDiseaseMatrix();
        //new Compare2().computeDrugDiseaseMatrix();
-       new Compare2().computeGeneDiseaseMatrix();
+       //new Compare2().computeGeneDiseaseMatrix();
+       new Compare2().computeDrugGeneMatrix();
       
     }
 }

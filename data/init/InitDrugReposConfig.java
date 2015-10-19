@@ -18,6 +18,7 @@ public class InitDrugReposConfig {
         conf.drug_xml = "../../drugbank/drugbank.xml";
         // Id Files
         conf.drug_id = "../../id/drug_id.txt";
+        conf.cas_id = "../../id/cas_number.txt";
         conf.gene_id = "../../id/gene_id.txt";
         conf.disease_id = "../../id/disease_id.txt";
         // Smiles file
@@ -135,6 +136,7 @@ public class InitDrugReposConfig {
         conf.drug_xml = "../../drugbank/drugbank.xml";
         // Id Files
         conf.drug_id = "../../compare2/id/compare2_drug_id.txt";
+        conf.cas_id = "../../compare2/id/compare2_cas_id.txt";
         conf.gene_id = "../../id/gene_id.txt";
         conf.disease_id = "../../compare2/id/compare2_disease_id.txt";
         // Smiles file
