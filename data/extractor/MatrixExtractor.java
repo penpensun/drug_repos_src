@@ -7,6 +7,8 @@ package data.extractor;
 
 import data.io.DataReader;
 import data.io.DataWriter;
+import data.io.DrugReposConfig;
+import data.processor.IndigoSim;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -182,6 +184,37 @@ public class MatrixExtractor {
     
     public static void main(String args[]){
         new MatrixExtractor().runExtractDrugDiseaseMatrix(1, 0);
+    }
+
+    public void extractDrugMatrix(DrugReposConfig conf) {
+        DataReader reader = new DataReader();
+        IndigoSim indigo = new IndigoSim();
+        HashMap<String, String> smilesMap = reader.readMap2(conf.drug_smiles);
+        ArrayList<String> drugList = reader.readIds(conf.drug_id);
+        float[][] matrix = new float[drugList.size()][drugList.size()];
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = i; j < matrix.length; j++) {
+                int finished = j * matrix[0].length + j;
+                if (finished % 10000 == 0) {
+                    System.out.println(finished / matrix[0].length / matrix.length * 100 + "% finished");
+                }
+                if (i == j) {
+                    matrix[i][j] = Float.NaN;
+                    continue;
+                }
+                String smiles1 = smilesMap.get(drugList.get(i));
+                String smiles2 = smilesMap.get(drugList.get(j));
+                if (smiles1 == null || smiles2 == null || smiles1.equalsIgnoreCase("null") || smiles2.equalsIgnoreCase("null")) {
+                    matrix[i][j] = 0;
+                    matrix[j][i] = 0;
+                    continue;
+                }
+                float sim = (float) (indigo.runSim(smiles1, smiles2));
+                matrix[i][j] = sim;
+                matrix[j][i] = sim;
+            }
+        }
+        new DataWriter().writeMatrix(matrix, conf.drug_matrix);
     }
     
 }

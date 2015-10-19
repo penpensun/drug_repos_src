@@ -128,19 +128,19 @@ public class AssociationExtractor {
     
     /**
      * This method extracts the genenames connected with diseases.
-     * @param geneNameFile
+     * @param geneFile
      * @param ctdGeneDiseaseFile
      * @param geneNameOutput
      * @param diseaseNameOutput
      * @param assocOutput 
      */
-    private void extractGeneDiseaseAssoc(String geneNameFile, 
+    private void extractGeneDiseaseAssoc(String geneFile, 
             String diseaseFile,
             String ctdGeneDiseaseFile, 
             String assocOutput){
         DataReader reader = new DataReader();
         ArrayList<String> diseaseList = reader.readIds2(diseaseFile);
-        ArrayList<String> geneNameList = reader.readIds(geneNameFile);
+        ArrayList<String> geneList = reader.readIds(geneFile);
         HashMap<String, HashSet<String>> map = new HashMap<>();
         try{
         FileReader fr = new FileReader(ctdGeneDiseaseFile);
@@ -160,7 +160,7 @@ public class AssociationExtractor {
             String diseaseName = String.copyValueOf(splits[2].toCharArray()).trim();
             if(diseaseName.isEmpty() || geneName.isEmpty()) /* If disease name is empty, then continue. */
                 continue;
-            if(!geneNameList.contains(geneName))
+            if(!geneList.contains(geneName))
                 continue;
             if(!diseaseList.contains(diseaseName))
                 continue;
