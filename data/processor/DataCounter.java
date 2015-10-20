@@ -424,7 +424,7 @@ public class DataCounter {
             //    "../../ligand/ligand_geneName_relation_5.txt");
         
         //new DataCounter().runAssociationCounter();
-        System.out.println(new DataCounter().mapCounter("../../gsn/negative_0.3.txt"));
+        System.out.println(new DataCounter().mapCounter("../../compare2/gsn/compare2_gsn.txt"));
     }
     
 }

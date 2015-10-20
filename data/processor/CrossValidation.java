@@ -53,27 +53,29 @@ public class CrossValidation {
         new DataWriter().writeMatrix(matrix, conf.drug_disease_cv_matrix);
     }
     
-    /**
-     * This method generates the cross validation for compare2 data set.
-     * @param conf 
-     */
+    
     public void genCrossValidCompare2(DrugReposConfig conf){
         DataReader reader = new DataReader();
-        ArrayList<String> drugList = reader.readIds(conf.compare2_drug_id);
-        ArrayList<String> diseaseList  = reader.readIds2(conf.compare2_disease_id);
-        float matrix[][] = reader.readMatrix(conf.compare2_drug_disease_matrix,
-                drugList.size(), diseaseList.size());
+        ArrayList<String> drugList = reader.readIds(conf.drug_id);
+        ArrayList<String> diseaseList  = reader.readIds2(conf.disease_id);
+        float matrix[][] = reader.readMatrix(conf.drug_disease_matrix, drugList.size(), diseaseList.size());
         ArrayList<Pair> edgePairs = new ArrayList<>();
+        // Read the compare2 gsp
+        HashMap<String, HashSet<String>> compare2Gsp = reader.readMap(conf.gsp);
         int numEdges = 0;
         for(int i=0;i<matrix.length;i++)
             for(int j=0;j<matrix[0].length;j++){
                 if(matrix[i][j] == conf.posEw){
+                    HashSet<String> dSet = compare2Gsp.get(drugList.get(i));
+                    if(dSet == null || !dSet.contains(diseaseList.get(j)))
+                        continue;
+                    
                     // If there is an edge between vertex i and vertex j.
                     edgePairs.add(new Pair(i,j));
                     numEdges++;
                 }
             }
-        int numToRemove = (int)(conf.compare2_cv_prop*numEdges);
+        int numToRemove = (int)(conf.cv_prop*numEdges);
         System.out.println("Number of edges:  "+numEdges);
         System.out.println("Number of edges to remove:  "+numToRemove);
         ArrayList<Pair> removedPairs = new ArrayList<>();
@@ -87,12 +89,11 @@ public class CrossValidation {
         }
         //See if output is needed.
         HashMap<String, HashSet<String>> ans = null;
-        if(conf.compare2_gsp != null){
-            ans = outputCrossValidPos(removedPairs,drugList, diseaseList,conf.compare2_gsp);
+        if(conf.gsp != null){
+            ans = outputCrossValidPos(removedPairs,drugList, diseaseList,conf.compare2_cv_gsp);
         }
         //Write the matrix
-        new DataWriter().writeMatrix(matrix, 
-                conf.compare2_drug_disease_cv_matrix);
+        new DataWriter().writeMatrix(matrix, conf.drug_disease_cv_matrix);
     }
     /**
      * This method writes the "removed" pairs from cross-validation into the given output File.

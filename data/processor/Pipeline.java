@@ -28,6 +28,11 @@ public class Pipeline {
         cv.genCrossValid(conf);
     }
     
+    public void cvPipelineCompare2(DrugReposConfig conf){
+        CrossValidation cv = new CrossValidation();
+        cv.genCrossValidCompare2(conf);
+    }
+    
     /**
      * This is the pipeline for roc curve.
      * @param conf 
@@ -79,19 +84,53 @@ public class Pipeline {
         DataProcessor processor = new DataProcessor();
         processor.summarizeRes(conf,parsedRes,true);
     }
+   
     
-    
-    /**
-     * This is the pipeline for cross-validation for compare2.
-     * @param conf 
-     */
-    public void cvPipelineCompare2(DrugReposConfig conf){
-         //initDrugReposConfig(conf);
-        CrossValidation cv = new CrossValidation();
-        cv.genCrossValidCompare2(conf);
+    public void rocPipelineCompare2(DrugReposConfig conf){
+        cvPipelineCompare2(conf);
+        // For test
+        //String testOutput = "../../disease/test.txt";
+        //try{checkHighestSim(crossValidMap, drugDiseaseAssoc, testOutput);} catch(IOException e){e.printStackTrace();}
+        //System.out.println("H sim test finished");
+        
+        System.out.println("Drug - disease matrix for cross-validation has been written to:  "+conf.drug_disease_cv_matrix);
+        PreClusterParser parser = new PreClusterParser();
+        
+        parser.createDrugDiseasePreclusterCvMatrix(conf);
+        System.out.println("Drug - disease prcluster matrix has been written to:  "+conf.drug_disease_precluster_cv_matrix);
+        
+        nforce.graphs.NpartiteGraph resGraph = (nforce.graphs.NpartiteGraph)nforce.io.Main.runGraph(conf.cvConfig);
+         
+        // Parse the result into association file.
+        
+        ResParser resParser = new ResParser();
+        
+        //HashMap<String, HashSet<String>> parsedRes = resParser.parseRes3(clusterOutput, drugVertexPreClusterMap, diseaseVertexPreClusterMap);
+        HashMap<String, HashSet<String>> parsedRes = resParser.parseRes2(resGraph, conf);
+        
+        ArrayList<String> diseaseList = new DataReader().readIds2(conf.disease_id);
+        float[][] diseaseMatrix = new DataReader().readMatrix(conf.disease_matrix, diseaseList.size(), diseaseList.size());
+        System.out.println("Start sim disease repos.");
+        //new SimDiseaseRepos().reposSimDisease(parsedRes, inputMap, diseaseMatrix, diseaseList, 0.9f);
+        //HashMap<String, HashSet<String>> parsedRes = resParser.parseRes2(resGraph, 
+          //      drugVertexPreClusterMap, 
+            //    diseaseVertexPreClusterMap, 
+              //  drugDiseaseAssoc);
+        //For test output the pared result\
+        if(conf.simRepos){
+            System.out.println("Start sim disease repos.");
+            new SimDiseaseRepos().reposSimDisease(parsedRes, diseaseMatrix, diseaseList, conf.simReposTh);
+        }
+        new DataWriter().writeHashMap2(parsedRes, conf.cv_result_output);
+        
+        
+        
+        System.out.println("Parsed result has been written.");
+        
+        // Parse the result and output the roc data.
+        DataProcessor processor = new DataProcessor();
+        processor.summarizeResCompare2(conf,parsedRes,true);
     }
-    
-    
     /**
      * This is the pipeline for drug repositioning.
      * @param conf 
@@ -136,7 +175,7 @@ public class Pipeline {
                 conf.drugPreClustConfig.p.setThresh(drug_thresh);
                 conf.diseasePreClustConfig.p.setThresh(disease_thresh);
                 pl.preClusterPipeline(conf);
-                pl.cvPipeline(conf);
+                pl.cvPipelineCompare2(conf);
                 float thresh = 0.01f;
                 for(thresh = 0.01f; thresh< 0.71f;thresh+=0.02){
                     conf.cvConfig.p.setThresh(thresh);
@@ -152,25 +191,23 @@ public class Pipeline {
     public void runRocCompare2(){
         DrugReposConfig conf = new DrugReposConfig();
         Pipeline pl = new Pipeline();
-        new InitDrugReposConfig().initDrugReposConfig(conf);
-        conf.gsn = "../../gsn/negative_comp.txt";
-        float[] drug_thresh_array = {0.85f};
+        new InitDrugReposConfig().initCompare2(conf);
+        float[] drug_thresh_array = {0.90f};
         //{0.85f,0.95f};
-        float[] disease_thresh_array = {0.85f};
+        float[] disease_thresh_array = {0.90f};
         //{0.5f,0.6f,0.7f,0.8f,0.85f,0.9f,0.95f};
         for(int i = 0;i < drug_thresh_array.length;i++)
             for(int j = 0;j<disease_thresh_array.length;j++){
                 float drug_thresh = drug_thresh_array[i];
                 float disease_thresh = disease_thresh_array[j];
-                conf.roc_output = "../../cv/roc_"+drug_thresh+"_"+disease_thresh+".txt";
+                conf.roc_output = "../../compare2/cv/roc_"+drug_thresh+"_"+disease_thresh+".txt";
                 conf.drugPreClustConfig.p.setThresh(drug_thresh);
                 conf.diseasePreClustConfig.p.setThresh(disease_thresh);
-                //pl.preClusterPipeline(conf);
-                pl.cvPipeline(conf);
+                pl.preClusterPipeline(conf);
                 float thresh = 0.01f;
                 for(thresh = 0.02f; thresh< 0.71f;thresh+=0.02){
                     conf.cvConfig.p.setThresh(thresh);
-                    pl.rocPipeline(conf);
+                    pl.rocPipelineCompare2(conf);
                 }
             }
     }
@@ -197,8 +234,8 @@ public class Pipeline {
     }
     public static void main(String args[]){
         //new Pipeline().runRepos();
-        new Pipeline().runRoc();
-        //new Pipeline().runRocCompare2();
+        //new Pipeline().runRoc();
+        new Pipeline().runRocCompare2();
         //pl.reposPipeline(conf);
         //pl.cvPipeline(conf);
         //for(float crossProp = 0.1f;crossProp<=1;crossProp+=0.1f){

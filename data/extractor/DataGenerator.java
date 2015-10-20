@@ -198,6 +198,52 @@ public class DataGenerator {
         writer.writeHashMap2(ans, conf.gsn);
     }
     
+    
+    public void generateNegativeCompare2(DrugReposConfig conf, int num){
+        HashMap<String, HashSet<String>> compare2Gsp = new DataReader().readMap(conf.gsp);
+        ArrayList<String> drugList = new ArrayList<>(compare2Gsp.keySet());
+        HashSet<String> diseaseList = new HashSet<>();
+        for(HashSet<String> value: compare2Gsp.values()){
+            diseaseList.addAll(value);
+        }
+        HashMap<String, HashSet<String>> negativeRelationMap = new HashMap<>();
+        for(String drug: drugList){
+            HashSet<String> diseaseSet = compare2Gsp.get(drug);
+            if(diseaseSet == null || diseaseSet.isEmpty())
+                continue;
+            if(!negativeRelationMap.containsKey(drug))
+                negativeRelationMap.put(drug,new HashSet<>());
+            
+            for(String disease: diseaseList)
+                if(!diseaseSet.contains(disease))
+                    negativeRelationMap.get(drug).add(disease);
+            
+        }
+        HashMap<String, HashSet<String>> ans = new HashMap<>();
+        ArrayList<String> keySet = new ArrayList<>(negativeRelationMap.keySet());
+
+        System.out.println("Start random selecting.");
+        int count =0;
+        while(count< num){
+            String randomKey =keySet.get((int)(Math.random()*keySet.size()));
+            ArrayList<String> diseaseSet = new ArrayList<>(negativeRelationMap.get(randomKey));
+            String randomValue = diseaseSet.get((int)(Math.random()*diseaseSet.size()));
+            if(!ans.containsKey(randomKey)){
+                ans.put(randomKey,new HashSet<>());
+                ans.get(randomKey).add(randomValue);
+                count++;
+            }else if(!ans.get(randomKey).contains(randomValue)){
+                ans.get(randomKey).add(randomValue);
+                count++;
+            }
+        }
+            
+        DataWriter writer = new DataWriter();
+        writer.writeHashMap2(ans, conf.gsn);
+        
+        
+    }
+    
     /**
      * This method generates the negative disease set based on disease similarity.
      * If drug1 -- disease1 and disease2 is not similar to disease1, then we assume drug1 -- disease2 is not associated.
@@ -375,7 +421,12 @@ public class DataGenerator {
         generateNegativeSpecial(conf,0.0f,60000);
     }
     
-   
+   public void runGsnCompare2(){
+       DrugReposConfig conf = new DrugReposConfig();
+       new InitDrugReposConfig().initCompare2(conf);
+       conf.gsn = "../../gsn/compare2_gsn.txt";
+       generateNegativeCompare2(conf, 3868);
+   }
     
     
     public void check(){
@@ -394,7 +445,7 @@ public class DataGenerator {
     
     public static void main(String args[]){
         DataGenerator gen = new DataGenerator();
-        gen.runGsn();
+        gen.runGsnCompare2();
         //gen.runGenerateNegative();
         //gen.runGenerateNegative();
         //gen.runGenerateNegative3_1();

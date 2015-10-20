@@ -171,7 +171,7 @@ public class GeneExtractor {
      * @param drugElement
      * @return 
      */
-    private ArrayList<Element> extractPolypepElementInDrug(Element drugElement){
+    public ArrayList<Element> extractPolypepElementInDrug(Element drugElement){
         List<Element> ligandElementList = extractLigand(drugElement);
         if(ligandElementList == null)
             return null;
@@ -223,7 +223,7 @@ public class GeneExtractor {
      * @param polypeptideElement
      * @return 
      */
-    private String extractFastaSeq(Element polypeptideElement){
+    public String extractFastaSeq(Element polypeptideElement){
         if(polypeptideElement == null)
             throw new IllegalArgumentException("(GeneNameExtractor.extractFastaSeq) The given polypeptide element is null.");
         Element aminoAcidSeq = polypeptideElement.getChild("amino-acid-sequence",polypeptideElement.getNamespace());
@@ -246,7 +246,7 @@ public class GeneExtractor {
      * @param polypeptide
      * @return 
      */
-    private String extractGeneName(Element polypeptide){
+    public String extractGeneName(Element polypeptide){
         
         List<Element> geneNameChildren = polypeptide.getChildren("gene-name",polypeptide.getNamespace());
             if(geneNameChildren == null || geneNameChildren.isEmpty()){

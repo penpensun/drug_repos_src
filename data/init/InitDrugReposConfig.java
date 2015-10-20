@@ -204,8 +204,8 @@ public class InitDrugReposConfig {
         conf.drug_gene_precluster_matrix = "../../compare2/repos/drug_gene_precluster_matrix.txt";
         conf.gene_disease_precluster_matrix = "../../compare2/repos/gene_disease_precluster_matrix.txt";
         //Setting for gsp
-        conf.gsp = "../../compare2/cv/cv_gsp.txt";
-        conf.gsn = "../../compare2/gsn/negative_0.3.txt";
+        conf.gsp = "../../compare2/compare2_gsp.txt";
+        conf.gsn = "../../compare2/gsn/compare2_gsn.txt";
         //Settings for repositioning
         conf.reposConfig = new Config();
         conf.reposConfig.input = "../../compare2/repos/inputxml.txt";
@@ -244,9 +244,10 @@ public class InitDrugReposConfig {
         conf.disease_cui_map = "../../assoc/disease_cui_assoc.txt";
         // The switch of the similar repositioning
         conf.simRepos = true;
-        conf.simReposTh = 0.85F;
+        conf.simReposTh = 0.90F;
         conf.remove_dissimilar_disease = true;
         conf.disease_to_remove_file = "../../disease/disease_to_remove_id.txt";
+        conf.compare2_cv_gsp = "../../compare2/compare2_cv_gsp.txt";
     }
     /*
     public void initDrugReposConfig(DrugReposConfig conf) {

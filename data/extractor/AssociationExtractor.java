@@ -47,32 +47,6 @@ public class AssociationExtractor {
         new DataWriter().writeHashMap2(drugDiseaseMap, outputFile);
     }
     
-    /**
-     * This method extracts the drug-cui associations and the drug cui matrix.
-     * @param drugId
-     * @param drugDiseaseAssoc
-     * @param diseaseCuiAssoc
-     * @param assocOutput
-     * @param matrixOutput 
-     */
-    public void extractDrugCuiAssoc(String drugId, String drugDiseaseAssoc, String diseaseCuiAssoc,
-            String assocOutput, String matrixOutput){
-        
-    }
-    
-    
-    /**
-     * This method extracts the gene-cui associations and the gene cui matrix.
-     * @param geneId
-     * @param geneDiseaseAssoc
-     * @param diseaseCuiAssoc
-     * @param assocOutput
-     * @param matrixOutput 
-     */
-    public void extractGeneCuiAssoc(String geneId, String geneDiseaseAssoc, String diseaseCuiAssoc,
-            String assocOutput, String matrixOutput){
-        
-    }
     
    
     /**

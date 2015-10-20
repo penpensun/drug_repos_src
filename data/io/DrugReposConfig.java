@@ -98,5 +98,8 @@ public class DrugReposConfig {
     // The map from disease to cui
     public String disease_cui_map;
     
+    // For Compare2
+    public String compare2_cv_gsp;
+    
     
 }

@@ -191,6 +191,7 @@ public class MatrixExtractor {
         IndigoSim indigo = new IndigoSim();
         HashMap<String, String> smilesMap = reader.readMap2(conf.drug_smiles);
         ArrayList<String> drugList = reader.readIds(conf.drug_id);
+        System.out.println(drugList.size());
         float[][] matrix = new float[drugList.size()][drugList.size()];
         for (int i = 0; i < matrix.length; i++) {
             for (int j = i; j < matrix.length; j++) {
