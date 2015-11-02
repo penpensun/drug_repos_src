@@ -151,8 +151,8 @@ public class DataProcessor {
         try{
         FileWriter fw= new FileWriter(conf.roc_output,append);
         BufferedWriter bw = new BufferedWriter(fw);
-        bw.write(tp+"\t"+fp+"\t"+tn+"\t"+fn+"\t"+(float)tp/(fn+tp)+"\t"+(1-(float)tn/(fp+tn))+"\n");
-        //bw.write((float)fp/(fp+tn)+"\t"+(float)tp/(fn+tp)+"\n");
+        //bw.write(tp+"\t"+fp+"\t"+tn+"\t"+fn+"\t"+(float)tp/(fn+tp)+"\t"+(1-(float)tn/(fp+tn))+"\n");
+        bw.write((float)fp/(fp+tn)+"\t"+(float)tp/(fn+tp)+"\n");
         bw.flush();
         bw.close();
         fw.close();

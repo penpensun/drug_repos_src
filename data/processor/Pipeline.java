@@ -62,7 +62,6 @@ public class Pipeline {
         
         ArrayList<String> diseaseList = new DataReader().readIds2(conf.disease_id);
         float[][] diseaseMatrix = new DataReader().readMatrix(conf.disease_matrix, diseaseList.size(), diseaseList.size());
-        HashMap<String, HashSet<String>> cvMap = new DataReader().readMap(conf.gsp);
         System.out.println("Start sim disease repos.");
         //new SimDiseaseRepos().reposSimDisease(parsedRes, inputMap, diseaseMatrix, diseaseList, 0.9f);
         //HashMap<String, HashSet<String>> parsedRes = resParser.parseRes2(resGraph, 
@@ -73,6 +72,7 @@ public class Pipeline {
         if(conf.simRepos){
             System.out.println("Start sim disease repos.");
             new SimDiseaseRepos().reposSimDisease(parsedRes, diseaseMatrix, diseaseList, conf.simReposTh);
+            new SimDiseaseRepos().reposSimDrug(parsedRes, conf);
         }
         new DataWriter().writeHashMap2(parsedRes, conf.cv_result_output);
         
@@ -131,6 +131,8 @@ public class Pipeline {
         DataProcessor processor = new DataProcessor();
         processor.summarizeResCompare2(conf,parsedRes,true);
     }
+    
+    
     /**
      * This is the pipeline for drug repositioning.
      * @param conf 
@@ -165,7 +167,7 @@ public class Pipeline {
         Pipeline pl = new Pipeline();
         new InitDrugReposConfig().initDrugReposConfig(conf);
         
-        float[] drug_thresh_array = { 0.8f, 0.85f,0.9f,0.95f};
+        float[] drug_thresh_array = {0.95f};
         float[] disease_thresh_array = {0.5f,0.6f,0.7f,0.8f,0.85f,0.9f,0.95f};
         for(int i = 0;i < drug_thresh_array.length;i++)
             for(int j = 0;j<disease_thresh_array.length;j++){
@@ -174,8 +176,8 @@ public class Pipeline {
                 conf.roc_output = "../../cv/roc_"+drug_thresh+"_"+disease_thresh+".txt";
                 conf.drugPreClustConfig.p.setThresh(drug_thresh);
                 conf.diseasePreClustConfig.p.setThresh(disease_thresh);
-                pl.preClusterPipeline(conf);
-                pl.cvPipelineCompare2(conf);
+                //pl.preClusterPipeline(conf);
+                pl.cvPipeline(conf);
                 float thresh = 0.01f;
                 for(thresh = 0.01f; thresh< 0.71f;thresh+=0.02){
                     conf.cvConfig.p.setThresh(thresh);
@@ -203,7 +205,7 @@ public class Pipeline {
                 conf.roc_output = "../../compare2/cv/roc_"+drug_thresh+"_"+disease_thresh+".txt";
                 conf.drugPreClustConfig.p.setThresh(drug_thresh);
                 conf.diseasePreClustConfig.p.setThresh(disease_thresh);
-                pl.preClusterPipeline(conf);
+                //pl.preClusterPipeline(conf);
                 float thresh = 0.01f;
                 for(thresh = 0.02f; thresh< 0.71f;thresh+=0.02){
                     conf.cvConfig.p.setThresh(thresh);
@@ -212,6 +214,33 @@ public class Pipeline {
             }
     }
     
+    
+    public void runRocCompare3(){
+        DrugReposConfig conf = new DrugReposConfig();
+        Pipeline pl = new Pipeline();
+        new InitDrugReposConfig().initCompare3(conf);
+        
+        float[] drug_thresh_array = { 0.92f};
+        float[] disease_thresh_array = {0.92f};
+        for(int i = 0;i < drug_thresh_array.length;i++)
+            for(int j = 0;j<disease_thresh_array.length;j++){
+                float drug_thresh = drug_thresh_array[i];
+                float disease_thresh = disease_thresh_array[j];
+                conf.roc_output = "../../compare3/cv/roc_"+drug_thresh+"_"+disease_thresh+".txt";
+                conf.drugPreClustConfig.p.setThresh(drug_thresh);
+                conf.diseasePreClustConfig.p.setThresh(disease_thresh);
+                pl.preClusterPipeline(conf);
+                float thresh = 0.01f;
+                for(thresh = 0.33f; thresh< 0.6f;thresh+=0.01){
+                    conf.cvConfig.p.setThresh(thresh);
+                    float simTh = 0.6f;
+                    for(simTh =0.7f;simTh<=0.805;simTh+=0.05){
+                        conf.simReposTh = simTh;
+                        pl.rocPipeline(conf);
+                    }         
+                }
+            }
+    }
     /**
      * This method runs drug-repositioning.
      */
@@ -234,8 +263,8 @@ public class Pipeline {
     }
     public static void main(String args[]){
         //new Pipeline().runRepos();
-        //new Pipeline().runRoc();
-        new Pipeline().runRocCompare2();
+        new Pipeline().runRoc();
+        //new Pipeline().runRocCompare3();
         //pl.reposPipeline(conf);
         //pl.cvPipeline(conf);
         //for(float crossProp = 0.1f;crossProp<=1;crossProp+=0.1f){

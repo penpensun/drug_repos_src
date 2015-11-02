@@ -6,7 +6,6 @@
 package data.compare;
 import java.io.*;
 import data.io.*;
-import data.processor.IndigoSim;
 import java.util.*;
 import data.init.InitDrugReposConfig;
 import data.extractor.DrugExtractor;
@@ -118,6 +117,13 @@ public class Compare2 {
                     continue;
                 diseaseMap.get(compare2d).addAll(revDisease);
             }
+            
+            if(diseaseMap.get(compare2d).isEmpty()){
+                if(compare2d.indexOf(";") != -1)
+                    diseaseMap.get(compare2d).add(compare2d.substring(0,compare2d.indexOf(";")));
+                else
+                    diseaseMap.get(compare2d).add(compare2d);
+            }
         }
         
         new DataWriter().writeHashMap2(diseaseMap, output);
@@ -188,7 +194,10 @@ public class Compare2 {
     }
     
     private void computeDrugMatrix(){
+        DrugExtractor drugEx = new DrugExtractor();
         DrugReposConfig conf = new DrugReposConfig();
+        drugEx.extractSmilesById(conf, "../../compare3/id/compare3_drug_id.txt", "../../compare3/smiles/compare3_smiles.txt");
+        
         new InitDrugReposConfig().initCompare2(conf);
         new data.extractor.MatrixExtractor().extractDrugMatrix(conf);
     }
@@ -525,6 +534,8 @@ public class Compare2 {
        ans.addAll(drugs2);
        new DataWriter().writeHashSet(ans, "../../compare2/id/compare2_drug_id.txt", "\n");
     }
+    
+    
     public static void main(String args[]){
         //new Compare2().runDiseaseNonoverlap();
         //new Compare2().runCheckGspOverlap();

@@ -73,6 +73,8 @@ public class MatrixExtractor {
         new DataWriter().writeMatrix(matrix, outputMatrix);
     }
 
+    
+    
     /**
      * This method extracts the drug-disease matrix from the ctd chemical-disease file.
      * @param drugListFile

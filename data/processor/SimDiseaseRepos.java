@@ -92,6 +92,36 @@ public class SimDiseaseRepos {
             parsedRes.get(drug).addAll(diseasesToAdd);
         }
     }
+    
+    
+    public void reposSimDrug(HashMap<String, HashSet<String>> parsedRes,
+            DrugReposConfig conf){
+        ArrayList<String> drugList = new DataReader().readIds2(conf.drug_id);
+        float[][] matrix = new DataReader().readMatrix(conf.drug_matrix, drugList.size(), drugList.size());
+        ArrayList<String> drugSet = new ArrayList<>(parsedRes.keySet());
+        
+        
+        
+        int counter = 0;
+        for(String drug:drugSet){
+            //HashSet<String> diseaseSet = inputMap.get(drug);
+            HashSet<String> diseaseSet = parsedRes.get(drug);
+            if(diseaseSet == null)
+                continue;
+            ArrayList<String> drugToAdd  = new ArrayList<>();
+            counter++;
+            if(counter % 1000  == 0)
+                System.out.println((float)(counter)/drugSet.size()*100+"% is finished.");
+            for(String d: drugList){
+                if(matrix[drugList.indexOf(drug)][drugList.indexOf(d)]>conf.simReposTh)
+                    if(!parsedRes.containsKey(d))
+                        parsedRes.put(d, diseaseSet);
+                    else parsedRes.get(d).addAll(diseaseSet);
+            }
+        }
+    
+    }
+    
     /**
      * This method checks if the given disease has a max sim beyond the threshold to the given diseaseSet.
      * i.e. There exists at least one disease d0 in diesaseSet, such that s(d0, disease)>threshold
@@ -126,6 +156,27 @@ public class SimDiseaseRepos {
                 return true;
         }
         return false;
+    }
+    
+    public ArrayList<String> extractSim0Disease(ArrayList<String> diseaseList, float[][] matrix, float th){
+        ArrayList<String> ans = new ArrayList<>();
+        for(int i=0;i<diseaseList.size();i++){
+            boolean flag = true;
+            for(int j=0;j<matrix.length;j++)
+                if(matrix[i][j] >th)
+                    flag = false;
+            if(flag)
+                ans.add(diseaseList.get(i));
+        }
+        return ans;
+    }
+    
+    public static void main(String args[]){
+        ArrayList<String> dl = new DataReader().readIds2("../../compare3/id/compare3_disease_id.txt");
+        float[][] matrix = new DataReader().readMatrix("../../compare3/matrix/compare3_disease_matrix.txt",
+                dl.size(), dl.size());
+        ArrayList<String> toRem = new SimDiseaseRepos().extractSim0Disease(dl, matrix, 0);
+        new DataWriter().writeIds(toRem, "../../compare3/id/compare3_disease_to_remove.txt", "\n");
     }
 
 }
