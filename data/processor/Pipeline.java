@@ -186,7 +186,54 @@ public class Pipeline {
             }
     }
     
+    public void runIncompRoc(){
+        DrugReposConfig conf = new DrugReposConfig();
+        Pipeline pl = new Pipeline();
+        new InitDrugReposConfig().initIncomp(conf);
+        
+        float[] drug_thresh_array = {0.9f};
+        float[] disease_thresh_array = {0.9f};
+        for(int i = 0;i < drug_thresh_array.length;i++)
+            for(int j = 0;j<disease_thresh_array.length;j++){
+                float drug_thresh = drug_thresh_array[i];
+                float disease_thresh = disease_thresh_array[j];
+                conf.roc_output = "../../incomplete/cv/roc_"+drug_thresh+"_"+disease_thresh+".txt";
+                conf.drugPreClustConfig.p.setThresh(drug_thresh);
+                conf.diseasePreClustConfig.p.setThresh(disease_thresh);
+                pl.preClusterPipeline(conf);
+                pl.cvPipeline(conf);
+                float thresh = 0.01f;
+                for(thresh = 0.01f; thresh< 0.71f;thresh+=0.05){
+                    conf.cvConfig.p.setThresh(thresh);
+                    pl.rocPipeline(conf);
+                }
+            }
+    }
     
+    
+    public void runFilterDrugRoc(){
+        DrugReposConfig conf = new DrugReposConfig();
+        Pipeline pl = new Pipeline();
+        new InitDrugReposConfig().initFilterIncomp(conf);
+        
+        float[] drug_thresh_array = {0.9f};
+        float[] disease_thresh_array = {0.9f};
+        for(int i = 0;i < drug_thresh_array.length;i++)
+            for(int j = 0;j<disease_thresh_array.length;j++){
+                float drug_thresh = drug_thresh_array[i];
+                float disease_thresh = disease_thresh_array[j];
+                conf.roc_output = "../../incomplete/cv/roc_"+drug_thresh+"_"+disease_thresh+".txt";
+                conf.drugPreClustConfig.p.setThresh(drug_thresh);
+                conf.diseasePreClustConfig.p.setThresh(disease_thresh);
+                pl.preClusterPipeline(conf);
+                pl.cvPipeline(conf);
+                float thresh = 0.01f;
+                for(thresh = 0.01f; thresh< 0.71f;thresh+=0.05){
+                    conf.cvConfig.p.setThresh(thresh);
+                    pl.rocPipeline(conf);
+                }
+            }
+    }
     /**
      * This method runs the roc curve for compare2.
      */
@@ -263,7 +310,9 @@ public class Pipeline {
     }
     public static void main(String args[]){
         //new Pipeline().runRepos();
-        new Pipeline().runRoc();
+        //new Pipeline().runRoc();
+        //new Pipeline().runIncompRoc();
+        new Pipeline().runFilterDrugRoc();
         //new Pipeline().runRocCompare3();
         //pl.reposPipeline(conf);
         //pl.cvPipeline(conf);
