@@ -167,13 +167,10 @@ public class Pipeline {
         Pipeline pl = new Pipeline();
         new InitDrugReposConfig().initDrugReposConfig(conf);
         
-<<<<<<< HEAD
+
         float[] drug_thresh_array = { 0.7f,0.8f,0.9f};
         float[] disease_thresh_array = {0.85f,0.95f};
-=======
-        float[] drug_thresh_array = {0.95f};
-        float[] disease_thresh_array = {0.5f,0.6f,0.7f,0.8f,0.85f,0.9f,0.95f};
->>>>>>> FETCH_HEAD
+
         for(int i = 0;i < drug_thresh_array.length;i++)
             for(int j = 0;j<disease_thresh_array.length;j++){
                 float drug_thresh = drug_thresh_array[i];
@@ -299,7 +296,7 @@ public class Pipeline {
     public void runRepos(){
         DrugReposConfig conf = new DrugReposConfig();
         new InitDrugReposConfig().initDrugReposConfig(conf);
-        float drug_thresh = 0.8f;
+        float drug_thresh = 0.9f;
         float disease_thresh = 0.9f;
         conf.drugPreClustConfig.p.setThresh(drug_thresh);
         conf.diseasePreClustConfig.p.setThresh(disease_thresh);
@@ -314,9 +311,9 @@ public class Pipeline {
         }  
     }
     public static void main(String args[]){
-        //new Pipeline().runRepos();
+        new Pipeline().runRepos();
         //new Pipeline().runRoc();
-        new Pipeline().runIncompRoc();
+        //new Pipeline().runIncompRoc();
         //new Pipeline().runFilterDrugRoc();
         //new Pipeline().runRocCompare3();
         //pl.reposPipeline(conf);

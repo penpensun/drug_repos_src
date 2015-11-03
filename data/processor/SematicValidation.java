@@ -105,10 +105,10 @@ public class SematicValidation {
             sumBw = new BufferedWriter(sumFw);
             sumBw.write(conf.drugPreClustConfig.p.getThresh()+"\t"+conf.diseasePreClustConfig.p.getThresh()+
                     "\t"+ conf.reposConfig.p.getThresh()+"\t"+conf.simReposTh+"\t"
-                    +resCount+"\t"+numSilver+"\t"+numGold+"\n");
+                    +resCount+"\t"+numSilver+"\t"+numGold+"\t"+(float)numSilver/resCount+"\n");
             System.out.print(conf.drugPreClustConfig.p.getThresh()+"\t"+conf.diseasePreClustConfig.p.getThresh()+
                     "\t"+ conf.reposConfig.p.getThresh()+"\t"+conf.simReposTh+"\t"
-                    +resCount+"\t"+numSilver+"\t"+numGold+"\n");
+                    +resCount+"\t"+numSilver+"\t"+numGold+"\t"+(float)numSilver/resCount+"\n");
             sumBw.flush();
             sumBw.close();
             sumFw.close();
