@@ -204,7 +204,7 @@ public class DataReader {
             line = line.trim();
             String[] splits = line.split("\\s+");
             if(cols != splits.length)
-                throw new IllegalArgumentException("(DataReader.readMatrix) Exp cols:  "+cols+"  real cols:  "+splits.length);
+                throw new IllegalArgumentException("(DataReader.readMatrix) "+filePath+"\n Exp cols:  "+cols+"  real cols:  "+splits.length);
             for(int i=0;i<splits.length;i++){
                 matrix[rowIdx][i] = Float.parseFloat(splits[i]);
             }

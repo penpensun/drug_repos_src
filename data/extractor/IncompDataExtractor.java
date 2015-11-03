@@ -126,9 +126,9 @@ public class IncompDataExtractor {
         String drugDiseaseOut = "../../incomplete/drug_disease_incomp_matrix.txt";
         String geneDiseaseOut = "../../incomplete/gene_disease_incomp_matrix.txt";
         
-        //new IncompDataExtractor().extractIncompMatrix(drugGeneMatrix, 1543, 1543, 0.1f, drugGeneOut);
-        extractIncompMatrix(drugDiseaseMatrix, 1622, 1622, 0.1f, drugDiseaseOut);
-        //new IncompDataExtractor().extractIncompMatrix(geneDiseaseMatrix, 3407,3407,0.1f,geneDiseaseOut);
+        extractIncompMatrix2(drugGeneMatrix, 1543, 1622, 0.1f, drugGeneOut);
+        extractIncompMatrix2(drugDiseaseMatrix, 1543, 3407, 0.1f, drugDiseaseOut);
+        extractIncompMatrix2(geneDiseaseMatrix, 1622,3407,0.1f,geneDiseaseOut);
     }
     
     public void filterDrug(){
@@ -149,7 +149,8 @@ public class IncompDataExtractor {
     }
     
     public static void main(String args[]){
-        new IncompDataExtractor().filterDrug();
+        //new IncompDataExtractor().filterDrug();
+        new IncompDataExtractor().removeInterMatrix();
     }
 }
 

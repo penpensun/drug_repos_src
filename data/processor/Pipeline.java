@@ -189,7 +189,7 @@ public class Pipeline {
     public void runIncompRoc(){
         DrugReposConfig conf = new DrugReposConfig();
         Pipeline pl = new Pipeline();
-        new InitDrugReposConfig().initIncomp(conf);
+        new InitDrugReposConfig().initIncomp2(conf);
         
         float[] drug_thresh_array = {0.9f};
         float[] disease_thresh_array = {0.9f};
@@ -311,8 +311,8 @@ public class Pipeline {
     public static void main(String args[]){
         //new Pipeline().runRepos();
         //new Pipeline().runRoc();
-        //new Pipeline().runIncompRoc();
-        new Pipeline().runFilterDrugRoc();
+        new Pipeline().runIncompRoc();
+        //new Pipeline().runFilterDrugRoc();
         //new Pipeline().runRocCompare3();
         //pl.reposPipeline(conf);
         //pl.cvPipeline(conf);
