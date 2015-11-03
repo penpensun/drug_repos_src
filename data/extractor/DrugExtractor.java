@@ -208,43 +208,12 @@ public class DrugExtractor {
     }
     
     
-    protected void extractDrugMatrix(DrugReposConfig conf){
-        DataReader reader = new DataReader();
-        data.processor.IndigoSim indigo = new data.processor.IndigoSim();
-        HashMap<String, String> smilesMap = reader.readMap2(conf.drug_smiles);
-        ArrayList<String> drugList = reader.readIds(conf.drug_id);
-        float[][] matrix = new float[drugList.size()][drugList.size()];
-        for(int i=0;i<matrix.length;i++)
-            for(int j=i;j<matrix.length;j++){
-                int finished = j*matrix[0].length+j;
-                if(finished %10000 ==0)
-                    System.out.println(finished/matrix[0].length/matrix.length*100+"% finished");
-                if(i ==j)
-                    matrix[i][j] = Float.NaN;
-                String smiles1 = smilesMap.get(drugList.get(i));
-                String smiles2 = smilesMap.get(drugList.get(j));
-                
-                if(smiles1== null || smiles2 == null ||
-                        smiles1.equalsIgnoreCase("null") || smiles2.equalsIgnoreCase("null")){
-                    matrix[i][j] = 0;
-                    matrix[j][i] = 0;
-                    continue;
-                }
-                    
-                float sim = (float)(indigo.runSim(smiles1,
-                        smiles2));
-                matrix[i][j] = sim;
-                matrix[j][i] = sim;
-            }
-        new DataWriter().writeMatrix(matrix, conf.drug_matrix);
-    }
     /**
      * This method extracts the synonyms of the drugs in the given drug id list.
      * @param drugbankXml
      * @param drugIdFile
      * @return 
      */
-    @Deprecated
     public HashMap<String, HashSet<String>> extractDrugSynonyms(String drugbankXml, String drugIdFile){
         List<Element> drugElementList = extractDrugList(drugbankXml);
         ArrayList<String> drugList = new DataReader().readIds(drugIdFile);
@@ -389,13 +358,16 @@ public class DrugExtractor {
      */
     public void extractSmilesByName(DrugReposConfig conf, String nameFile, String output){
         DataReader reader = new DataReader();
-        ArrayList<String> nameList = reader.readIds(nameFile);
+        ArrayList<String> nameList = reader.readIds2(nameFile);
+        for(int i=0;i<nameList.size();i++)
+            nameList.set(i, nameList.get(i).toLowerCase());
+        
         List<Element> drugElementList = extractDrugList(conf.drug_xml);
         HashMap<String, String> smilesMap = new HashMap<>();
         for(Element drug: drugElementList){
             String name = extractDrugName(drug);
-            
-            if(!nameList.contains(name))
+            String name1 = name.toLowerCase();
+            if(!nameList.contains(name1))
                 continue;
             String id = extractPrimaryId(drug);
             System.out.println(id+"\t"+name);
@@ -759,14 +731,22 @@ public class DrugExtractor {
     
     public void runExtractSmilesById(){
         DrugReposConfig conf = new DrugReposConfig();
-        new data.init.InitDrugReposConfig().initDrugReposConfig2(conf);
+        new data.init.InitDrugReposConfig().initDrugReposConfig(conf);
         extractSmilesById(conf, conf.drug_id, conf.drug_smiles);
+    }
+    
+    public void runExtractSmilesByName(){
+        DrugReposConfig conf = new DrugReposConfig();
+        new data.init.InitDrugReposConfig().initDrugReposConfig(conf);
+        String compare2_append_names = "../../compare2/drug_nonoverlap.txt";
+        String compare2_append_smiles = "../../compare2/drug_nonoverlap_smiles.txt";
+        extractSmilesByName(conf,compare2_append_names,compare2_append_smiles);
     }
     
     public void testComputeMatrix(){
         DrugReposConfig conf = new DrugReposConfig();
          DataReader reader = new DataReader();
-        new data.init.InitDrugReposConfig().initDrugReposConfig2(conf);
+        new data.init.InitDrugReposConfig().initDrugReposConfig(conf);
         ArrayList<String> drugList = reader.readIds2(conf.drug_id);
         conf.drug_matrix = "../../matrix/new_drug_matrix.txt";
         //extractDrugMatrix(conf);
@@ -786,18 +766,7 @@ public class DrugExtractor {
         }
         
     }
-    
-    public void modMatrix(){
-        String m = "../../matrix/new_drug_matrix.txt";
-        String drug_id = "../../id/drug_id.txt";
-        ArrayList<String> drugs = new DataReader().readIds2(drug_id);
-        float[][] matrix = new DataReader().readMatrix(m, drugs.size(), drugs.size());
-        for(int i=0;i<matrix.length;i++)
-            for(int j =0;j<matrix.length;j++)
-                if(i==j)
-                    matrix[i][j] = Float.NaN;
-        new DataWriter().writeMatrix(matrix, "../../matrix/new_drug_matrix.txt");
-    }
+
     
     
     
@@ -813,7 +782,8 @@ public class DrugExtractor {
        //new DrugExtractor().runExtractDrugGeneMatrix(1,0);
        //new DrugExtractor().runExtractSmilesById();
        //new DrugExtractor().testComputeMatrix();
-       new DrugExtractor().modMatrix();
+       //new DrugExtractor().modMatrix();
+       new DrugExtractor().runExtractSmilesByName();
     }
     
     

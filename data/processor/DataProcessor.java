@@ -107,7 +107,7 @@ public class DataProcessor {
     
     
     public void summarizeRes(DrugReposConfig conf, HashMap<String, HashSet<String>> resMap,
-            float thresh, boolean append){
+            boolean append){
         /* Get the drug list. */
         DataReader reader = new DataReader();
         ArrayList<String> diseaseList = reader.readIds2(conf.disease_id);
@@ -151,8 +151,66 @@ public class DataProcessor {
         try{
         FileWriter fw= new FileWriter(conf.roc_output,append);
         BufferedWriter bw = new BufferedWriter(fw);
-        //bw.write(thresh+"\t"+tp+"\t"+fp+"\t"+tn+"\t"+fn+"\t"+(float)tp/(fn+tp)+"\t"+(1-(float)tn/(fp+tn))+"\n");
+        //bw.write(tp+"\t"+fp+"\t"+tn+"\t"+fn+"\t"+(float)tp/(fn+tp)+"\t"+(1-(float)tn/(fp+tn))+"\n");
         bw.write((float)fp/(fp+tn)+"\t"+(float)tp/(fn+tp)+"\n");
+        bw.flush();
+        bw.close();
+        fw.close();
+        }catch(IOException e){
+            System.err.println("(DataProcessor.compareRes) File writer error.");
+            return;
+        }
+    }
+    
+    
+    
+    public void summarizeResCompare2(DrugReposConfig conf, HashMap<String, HashSet<String>> resMap,
+            boolean append){
+        /* Get the drug list. */
+        DataReader reader = new DataReader();
+        ArrayList<String> diseaseList = reader.readIds2(conf.disease_id);
+        HashMap<String, HashSet<String>> negMap = reader.readMap(conf.gsn);
+        HashMap<String, HashSet<String>> posMap = reader.readMap(conf.compare2_cv_gsp);
+        int tp = 0,fp = 0,tn = 0, fn = 0;
+        Set<Map.Entry<String,HashSet<String>>> posMapEntrySet = posMap.entrySet();
+        Iterator<Map.Entry<String, HashSet<String>>> posMapEntrySetIter = posMapEntrySet.iterator();
+        while(posMapEntrySetIter.hasNext()){
+            Map.Entry<String, HashSet<String>> posMapEntry = posMapEntrySetIter.next();
+            String drug = posMapEntry.getKey();
+            HashSet<String> posDiseaseSet = posMapEntry.getValue();
+            Iterator<String> posDiseaseIter = posDiseaseSet.iterator();
+            HashSet<String> resDiseaseSet = resMap.get(drug);
+            while(posDiseaseIter.hasNext()){
+                String disease = posDiseaseIter.next();
+                if(resDiseaseSet!= null && resDiseaseSet.contains(disease))
+                    tp++;
+                else
+                    fn++;
+            }
+        }
+        
+        // Drug list involved with cross-validation removals.
+        ArrayList<String> removedDrugList = new ArrayList<>(posMap.keySet());
+        for(String drug: removedDrugList)
+            for(String disease: diseaseList){
+                
+                // Check if this drug-disease pair is in the negative map, is in the result.
+                boolean isInRes,isInNeg;
+                isInRes = resMap.get(drug) != null && resMap.get(drug).contains(disease);
+                isInNeg = negMap.get(drug)!= null && negMap.get(drug).contains(disease);
+                if(isInRes && isInNeg){
+                    fp++;
+                } 
+                else if(!isInRes && isInNeg)
+                    tn++;
+            }
+                
+        /* Output the results.*/
+        try{
+        FileWriter fw= new FileWriter(conf.roc_output,append);
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.write(tp+"\t"+fp+"\t"+tn+"\t"+fn+"\t"+(float)tp/(fn+tp)+"\t"+(1-(float)tn/(fp+tn))+"\n");
+        //bw.write((float)fp/(fp+tn)+"\t"+(float)tp/(fn+tp)+"\n");
         bw.flush();
         bw.close();
         fw.close();

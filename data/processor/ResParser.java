@@ -76,7 +76,9 @@ public class ResParser {
                             new ArrayList<>(diseaseMapping.get(diseasePreClusterVtx.getValue()));
                     for(String drug: drugsInPreCluster)
                         for(String disease:diseasesInPreCluster){
-                            if(conf.remove_dissimilar_disease && diseaseToRemove.contains(disease))
+                            if(conf.remove_dissimilar_disease && diseaseToRemove.contains(disease)
+                                    && 
+                                    (drugDiseaseMap.get(drug) == null||!drugDiseaseMap.get(drug).contains(disease)) )
                                 continue;
                             if(!ans.containsKey(drug))
                                 ans.put(drug, new HashSet<>());

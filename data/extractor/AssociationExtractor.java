@@ -47,32 +47,6 @@ public class AssociationExtractor {
         new DataWriter().writeHashMap2(drugDiseaseMap, outputFile);
     }
     
-    /**
-     * This method extracts the drug-cui associations and the drug cui matrix.
-     * @param drugId
-     * @param drugDiseaseAssoc
-     * @param diseaseCuiAssoc
-     * @param assocOutput
-     * @param matrixOutput 
-     */
-    public void extractDrugCuiAssoc(String drugId, String drugDiseaseAssoc, String diseaseCuiAssoc,
-            String assocOutput, String matrixOutput){
-        
-    }
-    
-    
-    /**
-     * This method extracts the gene-cui associations and the gene cui matrix.
-     * @param geneId
-     * @param geneDiseaseAssoc
-     * @param diseaseCuiAssoc
-     * @param assocOutput
-     * @param matrixOutput 
-     */
-    public void extractGeneCuiAssoc(String geneId, String geneDiseaseAssoc, String diseaseCuiAssoc,
-            String assocOutput, String matrixOutput){
-        
-    }
     
    
     /**
@@ -128,19 +102,19 @@ public class AssociationExtractor {
     
     /**
      * This method extracts the genenames connected with diseases.
-     * @param geneNameFile
+     * @param geneFile
      * @param ctdGeneDiseaseFile
      * @param geneNameOutput
      * @param diseaseNameOutput
      * @param assocOutput 
      */
-    private void extractGeneDiseaseAssoc(String geneNameFile, 
+    private void extractGeneDiseaseAssoc(String geneFile, 
             String diseaseFile,
             String ctdGeneDiseaseFile, 
             String assocOutput){
         DataReader reader = new DataReader();
         ArrayList<String> diseaseList = reader.readIds2(diseaseFile);
-        ArrayList<String> geneNameList = reader.readIds(geneNameFile);
+        ArrayList<String> geneList = reader.readIds(geneFile);
         HashMap<String, HashSet<String>> map = new HashMap<>();
         try{
         FileReader fr = new FileReader(ctdGeneDiseaseFile);
@@ -160,7 +134,7 @@ public class AssociationExtractor {
             String diseaseName = String.copyValueOf(splits[2].toCharArray()).trim();
             if(diseaseName.isEmpty() || geneName.isEmpty()) /* If disease name is empty, then continue. */
                 continue;
-            if(!geneNameList.contains(geneName))
+            if(!geneList.contains(geneName))
                 continue;
             if(!diseaseList.contains(diseaseName))
                 continue;

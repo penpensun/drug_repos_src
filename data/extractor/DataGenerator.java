@@ -85,6 +85,7 @@ public class DataGenerator {
         ArrayList<String> drugList= reader.readIds(conf.drug_id);
         ArrayList<String> diseaseList = reader.readIds2(conf.disease_id);
         HashMap<String,HashSet<String>> relationMap = reader.readMap(conf.drug_disease_assoc);
+        
         HashMap<String, HashSet<String>> negativeRelationMap = new HashMap<>();
         float simMatrix[][] = reader.readMatrix(conf.disease_matrix, diseaseList.size(), diseaseList.size());
         
@@ -196,6 +197,52 @@ public class DataGenerator {
             
         DataWriter writer = new DataWriter();
         writer.writeHashMap2(ans, conf.gsn);
+    }
+    
+    
+    public void generateNegativeCompare2(DrugReposConfig conf, int num){
+        HashMap<String, HashSet<String>> compare2Gsp = new DataReader().readMap(conf.gsp);
+        ArrayList<String> drugList = new ArrayList<>(compare2Gsp.keySet());
+        HashSet<String> diseaseList = new HashSet<>();
+        for(HashSet<String> value: compare2Gsp.values()){
+            diseaseList.addAll(value);
+        }
+        HashMap<String, HashSet<String>> negativeRelationMap = new HashMap<>();
+        for(String drug: drugList){
+            HashSet<String> diseaseSet = compare2Gsp.get(drug);
+            if(diseaseSet == null || diseaseSet.isEmpty())
+                continue;
+            if(!negativeRelationMap.containsKey(drug))
+                negativeRelationMap.put(drug,new HashSet<>());
+            
+            for(String disease: diseaseList)
+                if(!diseaseSet.contains(disease))
+                    negativeRelationMap.get(drug).add(disease);
+            
+        }
+        HashMap<String, HashSet<String>> ans = new HashMap<>();
+        ArrayList<String> keySet = new ArrayList<>(negativeRelationMap.keySet());
+
+        System.out.println("Start random selecting.");
+        int count =0;
+        while(count< num){
+            String randomKey =keySet.get((int)(Math.random()*keySet.size()));
+            ArrayList<String> diseaseSet = new ArrayList<>(negativeRelationMap.get(randomKey));
+            String randomValue = diseaseSet.get((int)(Math.random()*diseaseSet.size()));
+            if(!ans.containsKey(randomKey)){
+                ans.put(randomKey,new HashSet<>());
+                ans.get(randomKey).add(randomValue);
+                count++;
+            }else if(!ans.get(randomKey).contains(randomValue)){
+                ans.get(randomKey).add(randomValue);
+                count++;
+            }
+        }
+            
+        DataWriter writer = new DataWriter();
+        writer.writeHashMap2(ans, conf.gsn);
+        
+        
     }
     
     /**
@@ -370,31 +417,29 @@ public class DataGenerator {
     
     public void runGsn(){
         DrugReposConfig conf = new DrugReposConfig();
-        new InitDrugReposConfig().initDrugReposConfig2(conf);
+        new InitDrugReposConfig().initDrugReposConfig(conf);
         conf.gsn = "../../gsn/negative_comp.txt";
         generateNegativeSpecial(conf,0.0f,60000);
     }
     
+   public void runGsnCompare2(){
+       DrugReposConfig conf = new DrugReposConfig();
+       new InitDrugReposConfig().initCompare2(conf);
+       conf.gsn = "../../gsn/compare2_gsn.txt";
+       generateNegativeCompare2(conf, 3868);
+   }
    
+   public void runGsnCompare3(){
+       DrugReposConfig conf = new DrugReposConfig();
+       new InitDrugReposConfig().initCompare3(conf);
+       conf.gsn = "../../compare3/gsn/compare3_gsn.txt";
+       generateNegative(conf,0.1f,3868);
+   }
     
-    
-    public void check(){
-        //String negaSet = "../../disease/disease_negative_set_0.txt";
-        String negaSet = "../../gsn/negative_0.05.txt";
-        HashMap<String, HashSet<String>> negMap = new DataReader().readMap(negaSet);
-        ArrayList<String> keyList = new ArrayList<>(negMap.keySet());
-        int numNeg = 0;
-        for(String key: keyList){
-            HashSet<String> value = negMap.get(key);
-            if(value!= null)
-                numNeg+= value.size();
-        }
-        System.out.println("Number of neg set:  "+numNeg);
-    }
     
     public static void main(String args[]){
         DataGenerator gen = new DataGenerator();
-        gen.runGsn();
+        gen.runGsnCompare3();
         //gen.runGenerateNegative();
         //gen.runGenerateNegative();
         //gen.runGenerateNegative3_1();

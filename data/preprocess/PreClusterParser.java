@@ -159,12 +159,15 @@ public class PreClusterParser {
         DataReader reader = new DataReader();
         int numDrugs = reader.readIds(conf.drug_id).size();
         //Check the number of drugs
+        /*
         if(numDrugs !=1543)
             throw new IllegalStateException("(PreClusterParser.createMatrixFile) The drug number is wrong:  "+numDrugs);
+        */
         int numGeneNames = reader.readIds(conf.gene_id).size();
+        /*
         if(numGeneNames != 1622)
             throw new IllegalStateException("(PreClusterParser.createMatrixFile) The gene number is wrong: "+numGeneNames);
-        
+        */
         int numDiseases = reader.readIds2(conf.disease_id).size();
         
         float[][] drugGeneMatrix = reader.readMatrix(conf.drug_gene_matrix, numDrugs, numGeneNames);

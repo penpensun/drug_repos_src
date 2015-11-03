@@ -18,6 +18,7 @@ public class DrugReposConfig {
     
     public String drug_xml;
     public String drug_id;
+    public String cas_id;
     public String drug_smiles;
     public String drug_matrix;
     public String gene_id;
@@ -97,8 +98,8 @@ public class DrugReposConfig {
     // The map from disease to cui
     public String disease_cui_map;
     
-    // The settings for the compare2
-    public String compare2_append_names;
-    public String compare2_append_smiles;
-    public String compare2_new_smiles;
+    // For Compare2
+    public String compare2_cv_gsp;
+    
+    
 }
