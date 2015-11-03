@@ -104,8 +104,8 @@ public class Pipeline {
         Pipeline pl = new Pipeline();
         new InitDrugReposConfig().initDrugReposConfig2(conf);
         
-        float[] drug_thresh_array = { 0.8f, 0.85f,0.9f,0.95f};
-        float[] disease_thresh_array = {0.5f,0.6f,0.7f,0.8f,0.85f,0.9f,0.95f};
+        float[] drug_thresh_array = { 0.7f,0.8f,0.9f};
+        float[] disease_thresh_array = {0.85f,0.95f};
         for(int i = 0;i < drug_thresh_array.length;i++)
             for(int j = 0;j<disease_thresh_array.length;j++){
                 float drug_thresh = drug_thresh_array[i];
