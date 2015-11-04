@@ -22,10 +22,12 @@ public class SematicValidation {
     private HashMap<String, HashSet<String>> readSematicData(String fileName){
         FileReader fr = null;
         BufferedReader br  =null;
+        
         HashMap<String, HashSet<String>> ans = new HashMap<>();
         try{
             fr = new FileReader(fileName);
             br = new BufferedReader(fr);
+            
             String line = null;
             //Jump the header.
             br.readLine();
@@ -47,6 +49,8 @@ public class SematicValidation {
         return ans;
     }
     
+    
+            
     private void compare(HashMap<String, HashSet<String>> res, 
             int resCount,
             HashMap<String, HashSet<String>> silver,
@@ -125,28 +129,84 @@ public class SematicValidation {
             HashMap<String, HashSet<String>> gold,
             DrugReposConfig conf,
             boolean append){
-        HashMap<String, HashSet<String>> cuiRes = new HashMap<>();
-        ArrayList<String> drugSet = new ArrayList<>(res.keySet());
-        for(String drug:drugSet)
-            cuiRes.put(drug,new HashSet<>());
-        for(String drug: drugSet){
-            HashSet<String> dSet = res.get(drug);
-            if(dSet == null || dSet.isEmpty())
-                continue;
-            for(String d: dSet){
-                HashSet<String> cui = diseaseCuiMap.get(d);
-                if(cui == null || cui.isEmpty())
+        
+        
+        FileWriter fw = null;
+        BufferedWriter bw = null;
+        int numSilver = 0,numGold=0,numBoth=0;
+        try{
+            fw = new FileWriter(conf.semanticOutput);
+            bw = new BufferedWriter(fw);
+            ArrayList<String> drugSet = new ArrayList<>(res.keySet());
+            for(String drug:drugSet){
+                HashSet<String> dSet = res.get(drug);
+                if(dSet == null || dSet.isEmpty())
                     continue;
-                cuiRes.get(drug).addAll(cui);
+                HashSet<String> newDSet = new HashSet<>();
+                for(String disease: dSet){
+                    
+                    HashSet<String> cui = diseaseCuiMap.get(disease);
+                    if(cui == null || cui.isEmpty())
+                        continue;
+                    HashSet<String> silverCui = silver.get(drug);
+                    HashSet<String> goldCui = gold.get(drug);
+                    boolean inSilver = false, inGold = false;
+                    
+                    for(String singleCui: cui){
+                        inSilver = false;
+                        inGold = false;
+                        if(silverCui != null &&silverCui.contains(singleCui)){
+                            inSilver = true;
+                            numSilver++;
+                        }
+                        if(goldCui!= null && goldCui.contains(singleCui)){
+                            inGold = true;
+                            numGold++;
+                        }
+                        if(inSilver && inGold)
+                            numBoth++;
+                        if(inSilver || inGold){
+                            bw.write(drug+"\t"+singleCui+"\t"+inSilver+"\t"+inGold+"\n");
+                            bw.flush();
+                        }
+                    
+                    }
+                    if(inSilver || Math.random()>0.5)
+                        newDSet.add(disease);
+                }
+                res.put(drug, newDSet);
             }
+            bw.close();
+            fw.close();
+        }catch(IOException e){
+            System.err.println("Sematic comparison result writing error:  "+conf.semanticOutput);
+            e.printStackTrace();
         }
+        
+        FileWriter sumFw = null;
+        BufferedWriter sumBw = null;
         int resCount = new DataCounter().mapCounter(res);
-        compare(cuiRes, resCount, silver, gold, conf,append);
+        try{
+            sumFw = new FileWriter(conf.semanticSumOutput,append);
+            sumBw = new BufferedWriter(sumFw);
+            sumBw.write(conf.drugPreClustConfig.p.getThresh()+"\t"+conf.diseasePreClustConfig.p.getThresh()+
+                    "\t"+ conf.reposConfig.p.getThresh()+"\t"+conf.simReposTh+"\t"
+                    +resCount+"\t"+numSilver+"\t"+numGold+"\n");
+            System.out.print(conf.drugPreClustConfig.p.getThresh()+"\t"+conf.diseasePreClustConfig.p.getThresh()+
+                    "\t"+ conf.reposConfig.p.getThresh()+"\t"+conf.simReposTh+"\t"
+                    +resCount+"\t"+numSilver+"\t"+numGold+"\n");
+            sumBw.flush();
+            sumBw.close();
+            sumFw.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        } 
+        
     }
     
-    public void runSematicValid2(DrugReposConfig conf, boolean append){
+    public void runSematicValid2(DrugReposConfig conf,
+            HashMap<String, HashSet<String>> resMap, boolean append){
         DataReader reader= new DataReader();
-        HashMap<String, HashSet<String>> resMap = reader.readMap(conf.repos_output);
         HashMap<String, HashSet<String>> goldMap = readSematicData(conf.semanticGoldFile);
         HashMap<String, HashSet<String>> silverMap = readSematicData(conf.semanticSilverFile);
         HashMap<String, HashSet<String>> diseaseCuiMap = reader.readMap(conf.disease_cui_map);
@@ -165,20 +225,6 @@ public class SematicValidation {
     
     
     public static void main(String args[]){
-        Pipeline pl = new Pipeline();
-        DrugReposConfig config = new DrugReposConfig();
         
-        new InitDrugReposConfig().initDrugReposConfig(config);
-        //config.repos_output = "../../parsed_res_0.1_0.45.txt";
-        config.repos_output = "../../assoc/drug_disease_assoc.txt";
-        /*
-        HashMap<String, HashSet<String>> resMap = new DataReader().readMap(config.repos_output);
-        HashMap<String, HashSet<String>> ddMap = new DataReader().readMap(config.drug_disease_assoc);
-        new ResParser().filter(resMap, ddMap);
-        config.repos_output ="../../test_repos_result.txt";
-                
-        new data.io.DataWriter().writeHashMap2(resMap, config.repos_output);
-                */
-        new SematicValidation().runSematicValid2(config, true);
     }
 }
