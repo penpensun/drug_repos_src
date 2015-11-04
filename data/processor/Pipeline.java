@@ -304,7 +304,7 @@ public class Pipeline {
         conf.semanticOutput = "../../repos/semantic_res.txt";
         conf.simReposTh= 0.9f;
         float thresh = 0.1f;
-        for(thresh = 0.45f; thresh< 0.61f;thresh+=0.05){
+        for(thresh = 0.4f; thresh< 0.81f;thresh+=0.1){
             conf.reposConfig.p.setThresh(thresh);
             reposPipeline(conf);
 
