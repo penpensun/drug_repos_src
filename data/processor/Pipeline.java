@@ -155,8 +155,10 @@ public class Pipeline {
         }
         //Remove drug-disease assoc from the parsed res, for we only focus on the novel associations.
         resParser.filter(parsedRes, drugDiseaseAssoc);
+        System.out.println("Before semantic:  "+new DataCounter().mapCounter(parsedRes));
+        new SematicValidation().runSematicValid2(conf,parsedRes, true);
+        System.out.println("After semantic:  "+new DataCounter().mapCounter(parsedRes));
         new DataWriter().writeHashMap2(parsedRes, conf.repos_output);
-        new SematicValidation().runSematicValid2(conf,true);
     }
     
     /**
@@ -300,11 +302,11 @@ public class Pipeline {
         float disease_thresh = 0.9f;
         conf.drugPreClustConfig.p.setThresh(drug_thresh);
         conf.diseasePreClustConfig.p.setThresh(disease_thresh);
-        preClusterPipeline(conf);
+        //preClusterPipeline(conf);
         conf.semanticOutput = "../../repos/semantic_res.txt";
         conf.simReposTh= 0.9f;
         float thresh = 0.1f;
-        for(thresh = 0.45f; thresh< 0.61f;thresh+=0.05){
+        for(thresh = 0.11f; thresh< 0.91f;thresh+=0.2){
             conf.reposConfig.p.setThresh(thresh);
             reposPipeline(conf);
 
