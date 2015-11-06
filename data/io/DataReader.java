@@ -280,7 +280,7 @@ public class DataReader {
         
         return ans;
         }catch(IOException e){
-            System.err.println("(DataReadaer.readMap2) File reading error.");
+            System.err.println("(DataReadaer.readMap2) File reading error: "+filePath);
             return null;
         }
         

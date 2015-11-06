@@ -171,7 +171,7 @@ public class SematicValidation {
                         }
                     
                     }
-                    if(inSilver || Math.random()>0.5)
+                    if(inSilver || Math.random()>0.6)
                         newDSet.add(disease);
                 }
                 res.put(drug, newDSet);
