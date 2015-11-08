@@ -322,6 +322,12 @@ public class DataReader {
         return null;
     }
     
+    /**
+     * This method reads the hashmap in reverse order.
+     * The restriction of the map: only two item in one line.
+     * @param filePath
+     * @return 
+     */
     public HashMap<String, String> readMapInReverseOrder2(String filePath){
         try{
             FileReader fr = new FileReader(filePath);

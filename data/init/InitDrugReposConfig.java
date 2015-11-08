@@ -118,8 +118,8 @@ public class InitDrugReposConfig {
         conf.drug_disease_cv_matrix = "../../cv/drug_disease_cv_matrix.txt";
         conf.drug_disease_precluster_cv_matrix = "../../cv/drug_disease_precluster_cv_matrix.txt";
         //Sematic output
-        conf.semanticGoldFile = "../../sematic/drug_repos_silver.txt";
-        conf.semanticSilverFile = "../../sematic/drug_repos_gold.txt";
+        conf.semanticGoldFile = "../../sematic/drug_repos_gold.txt";
+        conf.semanticSilverFile = "../../sematic/drug_repos_silver.txt";
         conf.semanticOutput = "../../repos/sematic_output.txt";
         conf.semanticSumOutput = "../../repos/semantic_sum.txt";
         // Disease to cui map
