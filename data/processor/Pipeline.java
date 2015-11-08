@@ -305,8 +305,15 @@ public class Pipeline {
         //preClusterPipeline(conf);
         conf.semanticOutput = "../../repos/semantic_res.txt";
         conf.simReposTh= 0.9f;
+<<<<<<< HEAD
         float thresh = 0.4f;
         for(thresh = 0.4f; thresh< 0.41f;thresh+=0.2){
+=======
+        float thresh = 0.1f;
+
+        for(thresh = 0.4f; thresh< 0.42f;thresh+=0.2){
+
+>>>>>>> origin/master
             conf.reposConfig.p.setThresh(thresh);
             reposPipeline(conf);
 

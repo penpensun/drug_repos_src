@@ -209,13 +209,13 @@ public class Searcher {
     
     
     public static void main(String[] args){
-        String parsedRes = "../../nforce_output/parsed_res_0.1_0.83.txt";
+        String parsedRes = "../../repos/parsed_repos_out.txt";
         String knownRes = "../../assoc/drug_disease_assoc.txt";
         String indexDir = "../../lucene/index";
-        String output = "../../lucene/valid_res_0.1.txt";
-        String drugSynFile = "../../drug/drug_syn.txt";
-        String diseaseSynFile = "../../disease/disease_syn_map.txt";
-        String drugNameFile = "../../drug/drug_drug_names_assoc.txt";
+        String output = "../../lucene/valid_res.txt";
+        String drugSynFile = "../../syn/drug_syn.txt";
+        String diseaseSynFile = "../../syn/disease_syn_map.txt";
+        String drugNameFile = "../../assoc/drug_drug_names_assoc.txt";
         
         new Searcher().validateParsedRes(parsedRes, knownRes,drugNameFile, indexDir, output, drugSynFile, diseaseSynFile);
     }
